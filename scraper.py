@@ -407,12 +407,19 @@ def scrape_college_info(driver,URLS):
     for item in data["college_info"]["highlights"]["table"]:
         print(f"  - {item['particular']}: {item['details'][:50]}...")
 
-    wait.until(
-        EC.presence_of_element_located(
-            (By.ID, "ovp_section_popular_courses")
-        )
+    driver.execute_script(
+        "window.scrollTo(0, document.body.scrollHeight / 2);"
     )
 
+    try:
+        wait.until(
+            EC.presence_of_element_located(
+                (By.ID, "ovp_section_popular_courses")
+            )
+        )
+        popular_courses_present = True
+    except TimeoutException:
+        popular_courses_present = False
     # ================= INTRO / SUMMARY =================
     data["intro"] = driver.execute_script("""
        let el = document.querySelector('#EdContent__ovp_section_popular_courses');
